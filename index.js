@@ -2,8 +2,8 @@ var MinNode = require("./MinNode.js");
 const log4js = require("./LogConfig");
 const logger = log4js.getLogger();
 const errLogger = log4js.getLogger("err");
-
 const { debugConfig } = require("./scripts/_debuggerConfig");
+
 (async () => {
   process.on("uncaughtException", (err) => {
     errLogger.error(err);

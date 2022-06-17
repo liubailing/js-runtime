@@ -33,7 +33,7 @@ const endTime = Date.parse(new Date("2022-06-01")) / 1000;
 // 列表数据
 const resListData = new Map();
 const pageCount = 20;
-const proxy ="http://127.0.0.1:7890"
+const proxy = "http://127.0.0.1:7890";
 
 //HK01 精准搜索采集 Exact phrase search
 class HK01ExactPhraseSearchExtractor extends Extractor {
@@ -63,6 +63,7 @@ class HK01ExactPhraseSearchExtractor extends Extractor {
       // await this.startBrowser();
 
       for (let keyword of keywors) {
+        console.log(` --- 搜索关键字 ${keywors.indexOf(keyword)+1}`);
         await this.requestList(keyword.trim(), 0);
         await delayProcess(1000);
       }
@@ -119,7 +120,7 @@ class HK01ExactPhraseSearchExtractor extends Extractor {
     // console.log(`返回状态 ${response.statusCode},结果：${response.body}`);
     // const res = JSON.parse(response.body);
     let jsonData = JSON.parse(response.body);
-    console.log(`搜索关键字 ${keyWord},页码：${pageIndex}`);
+    console.log(`关键字 ${keyWord},页码：${pageIndex}`);
     if (jsonData && jsonData.results) {
       await this.getList(keyWord, jsonData.results[0]);
       await delayProcess(3000);
@@ -136,7 +137,7 @@ class HK01ExactPhraseSearchExtractor extends Extractor {
     if (!data) {
       return;
     }
-    const { page, hits, nbPages } = data;
+    let { page, hits, nbPages } = data;
     // 如果存在这个值
     if (resListData.has(keyword)) {
       let curData = resListData.get(keyword);
@@ -176,7 +177,7 @@ class HK01ExactPhraseSearchExtractor extends Extractor {
     if (published_at_ts && published_at_ts < startTime) {
       return;
     }
-    
+
     let strAuthor,
       strArticle = "";
     if (authors && authors.length) {
@@ -196,9 +197,9 @@ class HK01ExactPhraseSearchExtractor extends Extractor {
         let $ = cheerio.load(body);
         $("#article-content-section .wpkev30:last").remove();
         $("#article-content-section .flex-col:last").remove();
-        let strMedia = $(".article-grid__top-media-section").html();
-        let strContent = $("#article-content-section").html();
-        strArticle = strMedia + strContent;
+        let strImg = $('meta[property="og:image"]').attr('content')
+        let strContent = $("#article-content-section").text();
+        strArticle = `${strContent}  ${strImg}`;
       }
     }
 
